@@ -2,67 +2,48 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import { BookingApi } from './api/booking.api';
 import ReserveTicksModal from './components/ReserveTicksModal';
+import UnReserveTicksModal from './components/unReserveTicksModal';
+
 
 function App() {
   const [ticks, setTicks] = useState([])
-  const [isModalAdd, setModalAdd] = React.useState(false)
-  const [isModalDel, setModalDel] = React.useState(false)
-  const onClose = (opt: boolean) => {
-    opt? setModalAdd(false) : setModalDel(false)
-  } 
-  const setModalReserve = (opt: boolean) => {
-    opt? setModalAdd(true) : setModalDel(true)
-  }
+  const [isModalAdd, setModalAdd] = useState(false)
+  const [isModalDel, setModalDel] = useState(false)
+  const [adminArr, setAdminArr] = useState('')
+  const onCloseAdd = () => setModalAdd(false) 
+  const onCloseDel = () => setModalDel(false)
 
-  const addClick = () => {
-
-    BookingApi.addTicks("ss", 2)
-  }
-
-  const delClick = () => {
-    BookingApi.delTicks("ss", 2)
-  }
-
-  const modalOptions = [
-    {
-      visible: isModalAdd, 
-      title: "Бронирование", 
-      content: <p>Количество мест</p>, 
-      footer: <button onClick={() => addClick()}>Бронировать</button>,
-      onClose: () => onClose(true)
-    },
-    {
-      visible: isModalDel, 
-      title: "Отмена", 
-      content: <p>Количество мест</p>, 
-      footer: <button onClick={() => delClick()}>Отменить</button>,
-      onClose: () => onClose(false)
-    }
-  ]
+ 
 
   useEffect(() => {
     async function fetchAll(){
-      const resp = await BookingApi.getCount();
-      setTicks(resp);
+      const resp = await BookingApi.getCount()
+      setTicks(resp)
     }
     fetchAll()
-  }, [])
+  }, [isModalAdd, isModalDel])
   
-
+  const adminReq = async () => {
+    const data = await BookingApi.adminReq()
+    const res = JSON.stringify(data, null, 2)
+    setAdminArr(res)
+  }
 
   return (
     <div className="App">
        <p>Количество свободных мест: {ticks}</p>    
-       <button onClick={() => setModalReserve(true)} className="btn">Забронировать</button>
-       <button onClick={() => setModalReserve(false)}>Отменить</button>
-       {modalOptions.map(
-         (item) => 
-          <ReserveTicksModal 
-            visible = {item.visible}
-            title = {item.title}
-            footer = {item.footer}
-            onClose = {() => item.onClose()}
-          />)}  
+       <button onClick={() => setModalAdd(true)} className="btn">Бронировать</button>
+       <button onClick={() => setModalDel(true)} className="btn">Отменить бронь</button>
+       <button onClick={() => adminReq()}>Админ запрос</button>
+       <pre>{adminArr}</pre>
+       <ReserveTicksModal 
+          visible = {isModalAdd}
+          onClose = {onCloseAdd}
+        />
+        <UnReserveTicksModal 
+          visible = {isModalDel}
+          onClose = {onCloseDel}
+        />
     </div>
   );
 }

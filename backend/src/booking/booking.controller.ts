@@ -1,7 +1,6 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Controller, Get, Query} from '@nestjs/common';
 import { stringify } from 'querystring';
 import { BookingService } from "./booking.service";
-import { UserDto } from "./dto/User.dto";
 import { addUserDto } from "./dto/addUser.dto";
 
 
@@ -11,22 +10,22 @@ export class BookingController{
     constructor(private bookingService: BookingService){}
 
     @Get()
-    getAll(){
-        return this.bookingService.countFree();
+    async getAll(){
+        return this.bookingService.getAll();
     }
 
     @Get('/add')
-    reserve(@Query() dto: addUserDto){
-        return this.bookingService.addReserve(dto);
+    async reserve(@Query() dto: addUserDto){
+        return this.bookingService.reserve(dto);
     }
 
     @Get('/del')
-    unReserve(@Query() dto: addUserDto){
-        return this.bookingService.delReserve(dto);
+    async unReserve(@Query() dto: addUserDto){
+        return this.bookingService.unReserve(dto);
     }
 
-    @Post()
-    createAll(@Body() dto: UserDto){
-        return this.bookingService.createAllTickets(dto);
+    @Get('/admin')
+    async adminReq(){
+        return this.bookingService.adminReq();
     }
 }

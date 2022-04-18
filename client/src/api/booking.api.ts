@@ -1,6 +1,15 @@
 export class BookingApi{
+
     public static async getCount(){
         const resp = await fetch(`http://localhost:5000`, {
+            method: "GET"
+        });
+        const data = await resp.json();
+        return data;
+    }
+
+    public static async adminReq(){
+        const resp = await fetch(`http://localhost:5000/admin`, {
             method: "GET"
         });
         const data = await resp.json();

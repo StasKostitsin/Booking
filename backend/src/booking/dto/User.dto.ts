@@ -1,5 +1,5 @@
 export class UserDto{
-    readonly id: number
+    readonly id?: number
     readonly name: string;
-    readonly reserve: boolean;
+    readonly reserve?: boolean;
 }
